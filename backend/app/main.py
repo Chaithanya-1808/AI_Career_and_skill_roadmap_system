@@ -68,6 +68,7 @@ def root():
     }
 
 @app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {
         "status": "healthy",
@@ -75,3 +76,4 @@ def health_check():
         "ai_model": settings.AI_MODEL,
         "ai_provider_ready": bool(settings.GEMINI_API_KEY)
     }
+
