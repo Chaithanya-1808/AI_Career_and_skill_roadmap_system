@@ -87,11 +87,11 @@ def update_profile(
 @router.post("/demo-login", response_model=Token)
 def demo_login(db: Session = Depends(get_db)):
     """
-    Demo student login for Ananya.
+    Demo student login for Chaithanya (3rd Year CSE).
     Authenticates through proper password validation and returns legitimate JWT session.
     """
-    ananya_email = "ananya@student.college.edu"
-    user = db.query(User).filter(User.email == ananya_email).first()
+    demo_email = "chaithanya@student.college.edu"
+    user = db.query(User).filter(User.email == demo_email).first()
     if not user:
         raise HTTPException(status_code=404, detail="Demo student not found. Please run seed script.")
 
@@ -100,3 +100,4 @@ def demo_login(db: Session = Depends(get_db)):
     user_out = UserOut.model_validate(user)
     user_out.roles = roles
     return Token(access_token=token, token_type="bearer", user=user_out)
+

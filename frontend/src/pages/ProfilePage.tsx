@@ -90,10 +90,10 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleLoadAnanyaDemo = async () => {
+  const handleLoadChaithanyaDemo = async () => {
     try {
       await demoLogin();
-      alert('Switched to Ananya Demo Student profile!');
+      alert('Switched to Chaithanya Demo Student profile!');
     } catch (err: any) {
       alert(err.message || 'Failed to switch to demo');
     }
@@ -111,11 +111,11 @@ export const ProfilePage: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={handleLoadAnanyaDemo}
+          onClick={handleLoadChaithanyaDemo}
           className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset to Ananya Demo Profile</span>
+          <span>Reset to Chaithanya Demo Profile</span>
         </button>
       </div>
 
@@ -174,7 +174,7 @@ export const ProfilePage: React.FC = () => {
                 type="text"
                 value={currentSemester}
                 onChange={(e) => setCurrentSemester(e.target.value)}
-                placeholder="e.g. Semester 4 (Year 2)"
+                placeholder="e.g. Semester 6 (Year 3)"
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-200"
               />
             </div>
@@ -282,3 +282,4 @@ export const ProfilePage: React.FC = () => {
     </div>
   );
 };
+

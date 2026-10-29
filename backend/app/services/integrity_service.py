@@ -90,3 +90,4 @@ def get_integrity_report(db: Session, attempt_id: str) -> Dict[str, Any]:
         "notes": attempt.integrity_summary.get("review_recommendation", "Standard monitoring recorded."),
         "timeline": timeline
     }
+

@@ -79,3 +79,4 @@ def get_mentor_students(
                 "can_approve_projects": s.can_approve_projects
             })
     return students_data
+

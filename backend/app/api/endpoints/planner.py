@@ -62,3 +62,4 @@ def get_weekly_plan(
         completed_tasks_count=completed_count,
         days=days_data
     )
+

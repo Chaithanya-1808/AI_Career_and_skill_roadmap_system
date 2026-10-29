@@ -141,3 +141,4 @@ def adapt_roadmap(
     roadmap_out = RoadmapOut.model_validate(active_roadmap)
     roadmap_out.career_title = career.title if career else active_roadmap.career_id
     return roadmap_out
+

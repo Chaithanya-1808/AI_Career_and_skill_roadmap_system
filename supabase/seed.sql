@@ -38,3 +38,4 @@ VALUES
     '{"html-css": 4.5, "javascript": 4.0, "react": 4.0, "nodejs-express": 4.0, "sql-databases": 3.5, "git-github": 4.0}'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
+

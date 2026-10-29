@@ -81,3 +81,4 @@ def mark_integrity_reviewed(
     attempt.integrity_status = action
     db.commit()
     return {"status": "success", "attempt_id": attempt.id, "new_status": attempt.integrity_status}
+

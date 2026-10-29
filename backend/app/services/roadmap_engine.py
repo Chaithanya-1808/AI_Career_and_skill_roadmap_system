@@ -494,3 +494,4 @@ def update_task_progress(
     roadmap.updated_at = datetime.now(timezone.utc)
     db.commit()
     return roadmap
+

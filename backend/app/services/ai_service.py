@@ -113,3 +113,4 @@ Instructions:
         logger.warning(f"Google Gemini generation call failed: {str(e)}. Defaulting to fallback engine.")
 
     return None, False, "Fallback Rule Engine"
+

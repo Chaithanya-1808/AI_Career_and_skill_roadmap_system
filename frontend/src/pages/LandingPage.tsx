@@ -127,7 +127,7 @@ export const LandingPage: React.FC = () => {
             className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
           >
             <UserCheck className="w-5 h-5" />
-            <span>Explore Demo: Ananya (2nd Year CS)</span>
+            <span>Explore Demo: Chaithanya (3rd Year CSE)</span>
           </button>
           <button
             onClick={() => { setAuthMode('register'); setError(''); }}
@@ -320,3 +320,4 @@ export const LandingPage: React.FC = () => {
     </div>
   );
 };
+

@@ -201,3 +201,4 @@ When claimed:
 3. **Authorization Filters:** Multi-tenant isolation ensuring students can only access their own roadmap, attempts, and notes.
 4. **No Frontend Leaks:** Sensitive question answers, database passwords, and AI API keys are restricted to backend execution.
 5. **Admin Bootstrapping:** Admins are created exclusively through server CLI/seed scripts (`backend/app/core/seed_data.py`), completely preventing self-registration of administrative privileges.
+

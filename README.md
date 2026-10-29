@@ -89,7 +89,7 @@ The application includes three distinct user roles with full Role-Based Access C
 
 | Role | Access Permissions | Seeded Demo Credentials |
 | :--- | :--- | :--- |
-| **Student (Demo: Ananya)** | Self-assessment, roadmap generation, study logging, project submission, certificate claiming. | **Email:** `ananya@student.college.edu`<br>**Password:** `AnanyaPass2026!` |
+| **Student (Demo: Chaithanya)** | Self-assessment, roadmap generation, study logging, project submission, certificate claiming. | **Email:** `chaithanya@student.college.edu`<br>**Password:** `ChaithanyaPass2026!` |
 | **Mentor / Faculty** | Review authorized student portfolios, evaluate capstone projects, provide feedback. | **Email:** `mentor@faculty.college.edu`<br>**Password:** `MentorPass2026!` |
 | **Administrator** | Manage careers and skills, review flagged integrity events, view platform metrics. | **Email:** `admin@aicareer.internal`<br>**Password:** `AdminSecurePass2026!` |
 
@@ -161,7 +161,7 @@ pytest -v
 All 12 core test suites pass without external network dependencies:
 - `test_root_and_health`: Health check and system readiness.
 - `test_student_registration_and_login`: Token issuance and credential verification.
-- `test_demo_login_ananya`: Pre-seeded demo user verification.
+- `test_demo_login_chaithanya`: Pre-seeded demo user verification.
 - `test_career_exploration_and_recommendations`: Token similarity and recommendation algorithms.
 - `test_diagnostic_assessment_flow_and_anti_cheat_scoring`: Hidden answer validation and server scoring.
 - `test_skill_gap_analysis`: Mathematical gap formula verification.
@@ -181,14 +181,14 @@ Builds cleanly with zero TypeScript errors into the `dist/` production bundle.
 
 ---
 
-## 🎓 The "Ananya" End-to-End Demo Journey
+## 🎓 The "Chaithanya" End-to-End Demo Journey
 
 Follow this step-by-step walkthrough to demonstrate the application to evaluators:
 
 ```
-[1. Login as Ananya]
-   Email: ananya@student.college.edu | Password: AnanyaPass2026!
-   Profile: 2nd-year B.Tech CS | Basic C & HTML | Target: Full-Stack Developer | 14h/week
+[1. Login as Chaithanya]
+   Email: chaithanya@student.college.edu | Password: ChaithanyaPass2026!
+   Profile: 3rd-year B.Tech CSE | Basic C & HTML | Target: Full-Stack Developer | 14h/week
           |
           v
 [2. Career Explorer]
@@ -228,11 +228,11 @@ Follow this step-by-step walkthrough to demonstrate the application to evaluator
           v
 [8. Mentor Review]
    Log out -> Log in as Mentor (`mentor@faculty.college.edu` / `MentorPass2026!`).
-   Navigate to 'Mentor Portal' -> Select Ananya's project -> Review code and click 'Approve Project'.
+   Navigate to 'Mentor Portal' -> Select Chaithanya's project -> Review code and click 'Approve Project'.
           |
           v
 [9. Verifiable Certificate & QR Verification]
-   Log back in as Ananya -> Navigate to 'Certificates'.
+   Log back in as Chaithanya -> Navigate to 'Certificates'.
    Click 'Claim Certificate' -> Certificate `ACR-2026-FSD-XXXX` is generated.
    Click 'Download Official PDF' to view vector certificate with dynamic QR code.
    Open verification link `/verify-certificate/ACR-2026-FSD-XXXX` in an incognito window to verify public authenticity.

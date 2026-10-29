@@ -131,3 +131,4 @@ def list_resources(
         results = db.query(LearningResource).all()
 
     return results
+

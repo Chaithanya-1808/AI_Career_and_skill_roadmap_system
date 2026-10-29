@@ -124,3 +124,4 @@ def verify_certificate(certificate_id: str, db: Session = Depends(get_db)):
         platform_name="AI Career & Smart Roadmap System",
         scope_disclaimer="Verified against server-recorded student milestone completion. Non-accredited college portfolio credential."
     )
+

@@ -201,3 +201,4 @@ CREATE POLICY "Students manage their mentor shares"
 CREATE POLICY "Admin view audit logs"
     ON audit_logs FOR SELECT
     USING (auth.is_admin());
+

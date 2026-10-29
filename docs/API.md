@@ -55,13 +55,13 @@ Authorization: Bearer <your_jwt_token>
 - **Body:**
 ```json
 {
-  "full_name": "Ananya Sharma",
-  "qualification": "B.Tech Computer Science",
-  "institution": "State University",
-  "current_semester": 4,
+  "full_name": "Chaithanya",
+  "qualification": "B.Tech Computer Science & Engineering (CSE)",
+  "institution": "Government Engineering College",
+  "current_semester": 6,
   "branch": "Computer Science & Engineering",
-  "academic_interests": ["Web Development", "Cloud Systems"],
-  "existing_skills": ["C", "HTML5", "CSS3"],
+  "academic_interests": ["Web Development", "AI Systems", "Software Engineering"],
+  "existing_skills": ["C", "HTML5", "Python"],
   "target_job_role": "Full-Stack Developer",
   "available_hours_per_week": 14,
   "preferred_learning_format": "interactive",
@@ -290,8 +290,8 @@ Authorization: Bearer <your_jwt_token>
 ```json
 {
   "project_id": "proj_uuid",
-  "repository_url": "https://github.com/ananya-dev/fullstack-ecommerce-capstone",
-  "live_demo_url": "https://fullstack-ecommerce-demo.vercel.app",
+  "repository_url": "https://github.com/chaithanya-dev/fullstack-ecommerce-capstone",
+  "live_demo_url": "https://chaithanya-ecommerce-demo.vercel.app",
   "submission_notes": "Implemented JWT auth, cart checkout, and responsive Tailwind UI."
 }
 ```
@@ -349,7 +349,7 @@ Authorization: Bearer <your_jwt_token>
 {
   "valid": true,
   "certificate_id": "ACR-2026-FSD-3B8A1",
-  "student_name": "Ananya Sharma",
+  "student_name": "Chaithanya",
   "title": "Full-Stack Developer Track Completion",
   "issue_date": "2026-10-29T19:30:00Z",
   "criteria_met": [
@@ -370,3 +370,4 @@ Authorization: Bearer <your_jwt_token>
 - **GET** `/api/admin/integrity-flags`: List of flagged assessment attempts.
 - **POST** `/api/admin/integrity-review/{attempt_id}?action=reviewed`: Clear or affirm flagged assessment attempt.
 - **POST** `/api/admin/careers`: Create or update career profiles and skill requirements.
+

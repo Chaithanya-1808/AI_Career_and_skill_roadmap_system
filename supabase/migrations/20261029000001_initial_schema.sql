@@ -288,3 +288,4 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     ip_address TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+

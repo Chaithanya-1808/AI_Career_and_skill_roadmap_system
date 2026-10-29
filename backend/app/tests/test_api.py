@@ -83,14 +83,15 @@ def test_student_registration_and_login(client):
     })
     assert r_bad.status_code == 401
 
-def test_demo_login_ananya(client):
+def test_demo_login_chaithanya(client):
     r = client.post("/api/auth/demo-login")
     assert r.status_code == 200
     data = r.json()
-    assert data["user"]["full_name"] == "Ananya"
-    assert data["user"]["email"] == "ananya@student.college.edu"
+    assert data["user"]["full_name"] == "Chaithanya"
+    assert data["user"]["email"] == "chaithanya@student.college.edu"
     assert "student" in data["user"]["roles"]
     assert data["user"]["available_hours_per_week"] == 14
+    assert "Year 3" in data["user"]["current_semester"]
 
 def test_career_exploration_and_recommendations(client):
     # 1. Demo login
@@ -108,7 +109,7 @@ def test_career_exploration_and_recommendations(client):
     assert "AI/ML Engineer" in titles
     assert "Cybersecurity Analyst" in titles
 
-    # 3. Recommendation engine with Ananya's interests
+    # 3. Recommendation engine with Chaithanya's interests
     rec_payload = {
         "academic_interests": ["Website development", "Problem-solving"],
         "existing_skills": ["HTML5 & Modern CSS", "C Programming"],
@@ -255,8 +256,8 @@ def test_project_submission(client):
     # Valid GitHub repo accepted
     r_good = client.post("/api/projects/submit", json={
         "project_id": "fsd-proj-portfolio",
-        "repository_url": "https://github.com/ananya-student/responsive-portfolio",
-        "live_demo_url": "https://ananya-portfolio.vercel.app",
+        "repository_url": "https://github.com/chaithanya-student/responsive-portfolio",
+        "live_demo_url": "https://chaithanya-portfolio.vercel.app",
         "submission_notes": "Built with semantic HTML5 and modern CSS Grid layout."
     }, headers=headers)
     assert r_good.status_code == 200
@@ -266,7 +267,7 @@ def test_certificate_issuance_and_public_verification(client):
     auth_resp = client.post("/api/auth/demo-login").json()
     headers = {"Authorization": f"Bearer {auth_resp['access_token']}"}
 
-    # Create a high scoring attempt (85%) so Ananya qualifies for diagnostic distinction
+    # Create a high scoring attempt (85%) so Chaithanya qualifies for diagnostic distinction
     start_resp = client.post("/api/assessments/start", json={"career_id": "full-stack-developer"}, headers=headers).json()
     attempt_id = start_resp["id"]
 
@@ -293,14 +294,14 @@ def test_certificate_issuance_and_public_verification(client):
     assert r_claim.status_code == 200
     cert = r_claim.json()
     assert "ACR-" in cert["certificate_id"]
-    assert cert["student_name"] == "Ananya"
+    assert cert["student_name"] == "Chaithanya"
 
     # Public verification (no auth headers required!)
     r_verif = client.get(f"/api/certificates/verify/{cert['certificate_id']}")
     assert r_verif.status_code == 200
     verif = r_verif.json()
     assert verif["is_valid"] is True
-    assert verif["student_name"] == "Ananya"
+    assert verif["student_name"] == "Chaithanya"
 
     # Invalid ID returns 404
     r_invalid = client.get("/api/certificates/verify/NON-EXISTENT-ID-1234")

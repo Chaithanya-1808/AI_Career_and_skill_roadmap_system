@@ -678,7 +678,7 @@ def seed_database(db: Session):
             db.add(p)
     db.commit()
 
-    # 5. Bootstrap Initial Admin and Demo Student (Ananya)
+    # 5. Bootstrap Initial Admin and Demo Student (Chaithanya - 3rd Year CSE)
     # Check Admin
     admin_email = "admin@aicareer.internal"
     admin_user = db.query(User).filter(User.email == admin_email).first()
@@ -697,21 +697,21 @@ def seed_database(db: Session):
         db.add(role)
         db.commit()
 
-    # Check Demo Student Ananya
-    ananya_email = "ananya@student.college.edu"
-    ananya_user = db.query(User).filter(User.email == ananya_email).first()
-    if not ananya_user:
-        ananya_user = User(
-            id="ananya-student-demo-001",
-            email=ananya_email,
-            hashed_password=get_password_hash("AnanyaPass2026!"),
-            full_name="Ananya",
-            qualification="B.Tech Computer Science & Engineering",
+    # Check Demo Student Chaithanya (3rd Year CSE)
+    chaithanya_email = "chaithanya@student.college.edu"
+    chaithanya_user = db.query(User).filter(User.email == chaithanya_email).first()
+    if not chaithanya_user:
+        chaithanya_user = User(
+            id="chaithanya-student-demo-001",
+            email=chaithanya_email,
+            hashed_password=get_password_hash("ChaithanyaPass2026!"),
+            full_name="Chaithanya",
+            qualification="B.Tech Computer Science & Engineering (CSE)",
             institution="Government Engineering College",
-            current_semester="Semester 4 (Year 2)",
+            current_semester="Semester 6 (Year 3)",
             branch="Computer Science & Engineering",
             academic_interests=["Website development", "Problem-solving", "Software Engineering"],
-            existing_skills=["C Programming", "HTML5 & Modern CSS"],
+            existing_skills=["C Programming", "HTML5 & Modern CSS", "Python Programming"],
             preferred_careers=["Full-Stack Developer", "Software Developer"],
             target_job_role="Associate Full-Stack Developer",
             available_hours_per_week=14,  # 2 hours per day
@@ -719,11 +719,17 @@ def seed_database(db: Session):
             target_timeline_weeks=16,
             onboarding_completed=True
         )
-        db.add(ananya_user)
+        db.add(chaithanya_user)
         db.commit()
 
-        role = UserRole(user_id=ananya_user.id, role="student")
+        role = UserRole(user_id=chaithanya_user.id, role="student")
         db.add(role)
+        db.commit()
+    else:
+        # Ensure updated profile details
+        chaithanya_user.full_name = "Chaithanya"
+        chaithanya_user.qualification = "B.Tech Computer Science & Engineering (CSE)"
+        chaithanya_user.current_semester = "Semester 6 (Year 3)"
         db.commit()
 
     # Check Demo Faculty/Mentor

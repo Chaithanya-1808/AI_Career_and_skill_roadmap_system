@@ -47,3 +47,4 @@ def read_integrity_report(
 
     report = get_integrity_report(db, attempt_id)
     return IntegrityReportOut(**report)
+

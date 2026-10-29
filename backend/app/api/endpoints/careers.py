@@ -38,3 +38,4 @@ def recommend_careers(
         preferred_careers=req.preferred_careers
     )
     return recommendation
+

@@ -302,3 +302,4 @@ def create_certificate_pdf(
     elements.append(Paragraph("This certificate is issued based on server-verified milestone completion. Non-accredited college portfolio credential.", footer_style))
 
     doc.build(elements)
+
