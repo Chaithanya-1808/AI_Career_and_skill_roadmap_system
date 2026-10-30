@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  CheckSquare, Camera, ShieldAlert, Clock, ArrowRight, ArrowLeft,
-  CheckCircle2, XCircle, AlertCircle, HelpCircle, Eye, EyeOff, RotateCcw
+  CheckSquare, Camera, CameraOff, Video, VideoOff, ShieldCheck, ShieldAlert,
+  Clock, ArrowRight, ArrowLeft, CheckCircle2, XCircle, AlertCircle, HelpCircle,
+  Eye, EyeOff, RotateCcw
 } from 'lucide-react';
 import { api } from '../services/api';
 import { AssessmentAttempt, AssessmentResult, AssessmentQuestion } from '../types';
@@ -15,9 +16,9 @@ export const AssessmentsPage: React.FC = () => {
   // Mode: 'launcher' | 'testing' | 'results'
   const [mode, setMode] = useState<'launcher' | 'testing' | 'results'>('launcher');
 
-  // Pre-test configuration
+  // Pre-test configuration: default to Standard Mode (No Camera) so camera is off unless chosen
   const [selectedCareerId, setSelectedCareerId] = useState(user?.target_job_role ? 'full-stack-developer' : 'full-stack-developer');
-  const [cameraEnabled, setCameraEnabled] = useState(true);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState<boolean | null>(null);
 
@@ -33,8 +34,9 @@ export const AssessmentsPage: React.FC = () => {
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const [history, setHistory] = useState<any[]>([]);
 
-  // Webcam Video Ref
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  // Webcam Video Refs
+  const launcherVideoRef = useRef<HTMLVideoElement | null>(null);
+  const testingVideoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
@@ -50,28 +52,35 @@ export const AssessmentsPage: React.FC = () => {
     }
   };
 
-  // Setup webcam preview during launcher if cameraEnabled is on
+  // Setup webcam preview during launcher if cameraEnabled is selected
   useEffect(() => {
     if (cameraEnabled && mode === 'launcher') {
       startCameraPreview();
-    } else if (!cameraEnabled && mediaStreamRef.current) {
+    } else if (!cameraEnabled) {
       stopCameraTracks();
-      setCameraPermissionGranted(false);
+      setCameraPermissionGranted(null);
     }
-    return () => {
-      if (mode !== 'testing') {
-        stopCameraTracks();
-      }
-    };
   }, [cameraEnabled, mode]);
+
+  // Cleanup all media tracks on component unmount
+  useEffect(() => {
+    return () => {
+      stopCameraTracks();
+    };
+  }, []);
 
   const startCameraPreview = async () => {
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         mediaStreamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+        if (launcherVideoRef.current) {
+          launcherVideoRef.current.srcObject = stream;
+          launcherVideoRef.current.play().catch(() => {});
+        }
+        if (testingVideoRef.current) {
+          testingVideoRef.current.srcObject = stream;
+          testingVideoRef.current.play().catch(() => {});
         }
         setCameraPermissionGranted(true);
       }
@@ -85,6 +94,44 @@ export const AssessmentsPage: React.FC = () => {
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach((track) => track.stop());
       mediaStreamRef.current = null;
+    }
+    if (launcherVideoRef.current) {
+      launcherVideoRef.current.srcObject = null;
+    }
+    if (testingVideoRef.current) {
+      testingVideoRef.current.srcObject = null;
+    }
+  };
+
+  // Callback ref to connect testing video element immediately on mount
+  const setTestingVideoRef = (el: HTMLVideoElement | null) => {
+    testingVideoRef.current = el;
+    if (el && mediaStreamRef.current) {
+      el.srcObject = mediaStreamRef.current;
+      el.play().catch(() => {});
+    }
+  };
+
+  // In-test camera toggle (allows turning camera off or on at any moment)
+  const handleToggleCameraInTest = async () => {
+    if (cameraEnabled) {
+      stopCameraTracks();
+      setCameraEnabled(false);
+      if (currentAttempt) {
+        setCurrentAttempt({
+          ...currentAttempt,
+          camera_monitoring_enabled: false,
+        });
+      }
+    } else {
+      setCameraEnabled(true);
+      if (currentAttempt) {
+        setCurrentAttempt({
+          ...currentAttempt,
+          camera_monitoring_enabled: true,
+        });
+      }
+      await startCameraPreview();
     }
   };
 
@@ -158,7 +205,7 @@ export const AssessmentsPage: React.FC = () => {
 
   const handleStartExam = async () => {
     if (cameraEnabled && !consentChecked) {
-      alert('Please confirm your consent to camera-monitored integrity checking, or select Non-Camera alternative mode.');
+      alert('Please confirm your consent to camera-monitored integrity checking, or select Standard Mode (Camera Off).');
       return;
     }
 
@@ -253,39 +300,60 @@ export const AssessmentsPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Assessment Integrity & Camera Consent Module */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            {/* Assessment Integrity & Camera Selection Module */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-bold text-slate-900">Consent-Based Assessment Integrity</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <label className="flex items-center gap-1.5 cursor-pointer text-slate-600">
-                    <input
-                      type="radio"
-                      name="camera_mode"
-                      checked={cameraEnabled}
-                      onChange={() => setCameraEnabled(true)}
-                      className="text-blue-600"
-                    />
-                    <span>Monitored Mode</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer text-slate-600 ml-2">
-                    <input
-                      type="radio"
-                      name="camera_mode"
-                      checked={!cameraEnabled}
-                      onChange={() => setCameraEnabled(false)}
-                      className="text-blue-600"
-                    />
-                    <span>Standard Mode (No Camera)</span>
-                  </label>
+                  <ShieldCheck className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-bold text-slate-900">Integrity & Proctoring Options</span>
                 </div>
               </div>
 
+              {/* Two prominent selection cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCameraEnabled(false)}
+                  className={`p-3.5 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                    !cameraEnabled
+                      ? 'bg-blue-50/70 border-blue-500 ring-1 ring-blue-500'
+                      : 'bg-white border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <div className={`p-2 rounded-lg shrink-0 ${!cameraEnabled ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                    <VideoOff className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Standard Mode (Camera Off)</span>
+                    <span className="text-[11px] text-slate-500 leading-tight block mt-0.5">
+                      Webcam stays completely OFF. Full eligibility for roadmaps and certificates.
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCameraEnabled(true)}
+                  className={`p-3.5 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                    cameraEnabled
+                      ? 'bg-blue-50/70 border-blue-500 ring-1 ring-blue-500'
+                      : 'bg-white border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <div className={`p-2 rounded-lg shrink-0 ${cameraEnabled ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Monitored Mode (Camera On)</span>
+                    <span className="text-[11px] text-slate-500 leading-tight block mt-0.5">
+                      Live local video presence verification in the active test window.
+                    </span>
+                  </div>
+                </button>
+              </div>
+
               {cameraEnabled ? (
-                <div className="space-y-3">
+                <div className="space-y-3 pt-1 border-t border-slate-200/60">
                   <p className="text-[11px] text-slate-500 leading-relaxed">
                     Camera preview is used solely to verify active student presence. <b>No video recordings or audio are stored on our servers.</b> All camera streams are strictly terminated immediately upon test completion.
                   </p>
@@ -294,7 +362,7 @@ export const AssessmentsPage: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <div className="w-36 h-24 rounded-lg bg-slate-900 overflow-hidden relative border border-slate-300 flex items-center justify-center shrink-0">
                       <video
-                        ref={videoRef}
+                        ref={launcherVideoRef}
                         autoPlay
                         playsInline
                         muted
@@ -338,9 +406,12 @@ export const AssessmentsPage: React.FC = () => {
                   </label>
                 </div>
               ) : (
-                <p className="text-[11px] text-slate-500">
-                  Standard mode selected. Tab-switch logs and server timers remain active for integrity auditing.
-                </p>
+                <div className="p-3 rounded-lg bg-blue-50/50 border border-blue-100 flex items-start gap-2 text-xs text-slate-600">
+                  <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <span>
+                    <b>Standard Mode Active:</b> Your webcamera will remain <b>OFF</b> throughout the assessment. Server-side countdown timers and tab-switch integrity logging will verify your exam.
+                  </span>
+                </div>
               )}
             </div>
 
@@ -424,11 +495,36 @@ export const AssessmentsPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-4">
-              {currentAttempt.camera_monitoring_enabled && (
-                <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Monitored</span>
+            <div className="flex items-center gap-3">
+              {currentAttempt.camera_monitoring_enabled ? (
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Monitored</span>
+                  </div>
+                  <button
+                    onClick={handleToggleCameraInTest}
+                    className="text-[11px] font-medium text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 px-2.5 py-1 rounded-lg border border-slate-200 transition-colors flex items-center gap-1"
+                    title="Turn camera off"
+                  >
+                    <VideoOff className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="hidden sm:inline">Turn Camera Off</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                    <VideoOff className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Camera Off</span>
+                  </div>
+                  <button
+                    onClick={handleToggleCameraInTest}
+                    className="text-[11px] font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200 transition-colors flex items-center gap-1"
+                    title="Enable camera"
+                  >
+                    <Camera className="w-3.5 h-3.5 text-blue-600" />
+                    <span className="hidden sm:inline">Turn On Camera</span>
+                  </button>
                 </div>
               )}
 
@@ -546,14 +642,49 @@ export const AssessmentsPage: React.FC = () => {
 
                 {/* Right Side Palette & Camera Feed */}
                 <div className="space-y-4">
-                  {currentAttempt.camera_monitoring_enabled && (
+                  {currentAttempt.camera_monitoring_enabled ? (
                     <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm text-center">
-                      <div className="w-full h-24 rounded-lg bg-slate-900 overflow-hidden relative">
-                        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                      <div className="w-full h-24 rounded-lg bg-slate-900 overflow-hidden relative border border-slate-200">
+                        <video
+                          ref={setTestingVideoRef}
+                          autoPlay
+                          playsInline
+                          muted
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <span className="text-[10px] text-slate-500 font-medium block mt-1.5">
-                        Live Monitor Active
+                      <div className="flex items-center justify-between mt-2 px-1">
+                        <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Live Monitor Active
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleToggleCameraInTest}
+                          className="text-[10px] text-slate-500 hover:text-red-600 flex items-center gap-1 font-medium"
+                        >
+                          <VideoOff className="w-3 h-3" />
+                          <span>Turn Off</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-sm text-center space-y-1.5">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+                        <VideoOff className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 block">Camera Inactive</span>
+                      <span className="text-[10px] text-slate-400 block leading-tight">
+                        Standard mode active. You can take the entire exam with your camera off.
                       </span>
+                      <button
+                        type="button"
+                        onClick={handleToggleCameraInTest}
+                        className="text-[10px] font-semibold text-blue-600 hover:text-blue-700 mt-1 inline-flex items-center gap-1 hover:underline"
+                      >
+                        <Camera className="w-3 h-3" />
+                        <span>Enable Camera</span>
+                      </button>
                     </div>
                   )}
 

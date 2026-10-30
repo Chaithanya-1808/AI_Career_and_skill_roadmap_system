@@ -1,6 +1,10 @@
 import os
+from pathlib import Path
 from typing import List
 from pydantic_settings import BaseSettings
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_DB_PATH = (BACKEND_DIR / "career_path.db").as_posix()
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "AI Career & Smart Roadmap System"
@@ -15,11 +19,14 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
         "http://localhost:3000",
     ]
     
     # Database
-    DATABASE_URL: str = "sqlite:///./career_path.db"
+    DATABASE_URL: str = f"sqlite:///{DEFAULT_DB_PATH}"
     
     # Supabase (Optional for local hybrid execution, required for cloud Supabase)
     SUPABASE_URL: str = ""

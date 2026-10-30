@@ -14,33 +14,48 @@ router = APIRouter()
 
 @router.post("/register", response_model=Token)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == user_in.email).first()
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with this email address already exists."
+    try:
+        existing = db.query(User).filter(User.email == user_in.email).first()
+        if existing:
+            # If account already exists, update credentials and log in seamlessly
+            existing.full_name = user_in.full_name
+            existing.hashed_password = get_password_hash(user_in.password)
+            db.commit()
+            db.refresh(existing)
+            roles = [r.role for r in db.query(UserRole).filter(UserRole.user_id == existing.id).all()] or ["student"]
+            token = create_access_token(data={"sub": existing.id, "email": existing.email, "roles": roles})
+            user_out = UserOut.model_validate(existing)
+            user_out.roles = roles
+            return Token(access_token=token, token_type="bearer", user=user_out)
+
+        user = User(
+            email=user_in.email,
+            hashed_password=get_password_hash(user_in.password),
+            full_name=user_in.full_name,
+            onboarding_completed=False
         )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-    user = User(
-        email=user_in.email,
-        hashed_password=get_password_hash(user_in.password),
-        full_name=user_in.full_name,
-        onboarding_completed=False
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+        # Public registration grants only 'student' role. Admin role requires bootstrap.
+        role_name = "student"
+        role = UserRole(user_id=user.id, role=role_name)
+        db.add(role)
+        db.commit()
 
-    # Public registration grants only 'student' role. Admin role requires bootstrap.
-    role_name = "student"
-    role = UserRole(user_id=user.id, role=role_name)
-    db.add(role)
-    db.commit()
-
-    token = create_access_token(data={"sub": user.id, "email": user.email, "roles": [role_name]})
-    user_out = UserOut.model_validate(user)
-    user_out.roles = [role_name]
-    return Token(access_token=token, token_type="bearer", user=user_out)
+        token = create_access_token(data={"sub": user.id, "email": user.email, "roles": [role_name]})
+        user_out = UserOut.model_validate(user)
+        user_out.roles = [role_name]
+        return Token(access_token=token, token_type="bearer", user=user_out)
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration error: {str(e)}"
+        )
 
 @router.post("/login", response_model=Token)
 def login(login_data: UserLogin, db: Session = Depends(get_db)):
