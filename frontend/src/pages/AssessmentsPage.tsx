@@ -25,6 +25,7 @@ export const AssessmentsPage: React.FC = () => {
   const [currentAttempt, setCurrentAttempt] = useState<AssessmentAttempt | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const answersRef = useRef<Record<string, string>>({});
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState(900); // 15 mins
   const [tabSwitchWarnings, setTabSwitchWarnings] = useState(0);
 
@@ -119,17 +120,34 @@ export const AssessmentsPage: React.FC = () => {
     };
   }, [mode, currentAttempt]);
 
-  // Server-synced countdown timer
+  // Server-synced countdown timer with safe local fallback
   useEffect(() => {
     if (mode !== 'testing' || !currentAttempt) return;
 
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const expires = new Date(currentAttempt.expires_at).getTime();
-      const remaining = Math.max(0, Math.floor((expires - now) / 1000));
-      setTimeRemainingSeconds(remaining);
+    // Parse expires_at with UTC awareness
+    const expiresRaw = currentAttempt.expires_at || '';
+    const expiresNormalized = expiresRaw.endsWith('Z') || expiresRaw.includes('+') || expiresRaw.includes('-', 10)
+      ? expiresRaw
+      : `${expiresRaw}Z`;
 
-      if (remaining <= 0) {
+    const expiresTime = new Date(expiresNormalized).getTime();
+    const now = Date.now();
+    const serverDelta = Math.floor((expiresTime - now) / 1000);
+
+    // If delta is valid and positive (>30s), use it.
+    // If invalid, NaN, or <= 30 (e.g. clock skew between local PC and server),
+    // safely fallback to time_limit_minutes * 60 so the user is never kicked out instantly!
+    let currentRemaining = (!isNaN(serverDelta) && serverDelta > 30)
+      ? serverDelta
+      : (currentAttempt.time_limit_minutes || 15) * 60;
+
+    setTimeRemainingSeconds(currentRemaining);
+
+    const timer = setInterval(() => {
+      currentRemaining -= 1;
+      setTimeRemainingSeconds(currentRemaining);
+
+      if (currentRemaining <= 0) {
         clearInterval(timer);
         handleAutoSubmit();
       }
@@ -151,8 +169,11 @@ export const AssessmentsPage: React.FC = () => {
       });
       setCurrentAttempt(attempt);
       setAnswers({});
+      answersRef.current = {};
       setCurrentQuestionIndex(0);
       setTabSwitchWarnings(0);
+      const initialSeconds = (attempt.time_limit_minutes || 15) * 60;
+      setTimeRemainingSeconds(initialSeconds);
       setMode('testing');
     } catch (err: any) {
       alert(err.message || 'Failed to start assessment');
@@ -160,7 +181,11 @@ export const AssessmentsPage: React.FC = () => {
   };
 
   const handleSelectOption = (questionId: string, optionId: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+    setAnswers((prev) => {
+      const next = { ...prev, [questionId]: optionId };
+      answersRef.current = next;
+      return next;
+    });
   };
 
   const handleAutoSubmit = () => {
@@ -170,11 +195,12 @@ export const AssessmentsPage: React.FC = () => {
   const handleSubmitExam = async () => {
     if (!currentAttempt) return;
     const timeSpent = (currentAttempt.time_limit_minutes * 60) - timeRemainingSeconds;
+    const finalAnswers = answersRef.current;
 
     try {
       const result = await api.submitAssessment({
         attempt_id: currentAttempt.id,
-        answers,
+        answers: finalAnswers,
         time_spent_seconds: Math.max(timeSpent, 10),
       });
       setAssessmentResult(result);
@@ -187,9 +213,10 @@ export const AssessmentsPage: React.FC = () => {
   };
 
   const formatTime = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+    const s = Math.max(0, secs);
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    return `${m}:${rem < 10 ? '0' : ''}${rem}`;
   };
 
   return (
@@ -448,6 +475,7 @@ export const AssessmentsPage: React.FC = () => {
                       onClick={() => {
                         const newAnswers = { ...answers };
                         delete newAnswers[q.id];
+                        answersRef.current = newAnswers;
                         setAnswers(newAnswers);
                       }}
                       className="text-[11px] text-slate-400 hover:text-slate-600 flex items-center gap-1"

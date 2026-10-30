@@ -17,10 +17,14 @@ def score_assessment_attempt(
     Never trusts client scores. Compares submitted option against protected database answers.
     """
     # Fetch questions for this attempt
-    # If attempt has recorded answers or we query questions from DB
-    question_ids = list(submitted_answers.keys())
-    questions = db.query(AssessmentQuestion).filter(AssessmentQuestion.id.in_(question_ids)).all()
-    q_map = {q.id: q for q in questions}
+    assigned_q_ids = (attempt.integrity_summary or {}).get("question_ids")
+    if assigned_q_ids:
+        questions_raw = db.query(AssessmentQuestion).filter(AssessmentQuestion.id.in_(assigned_q_ids)).all()
+        q_dict = {q.id: q for q in questions_raw}
+        questions = [q_dict[qid] for qid in assigned_q_ids if qid in q_dict]
+    else:
+        question_ids = list(submitted_answers.keys())
+        questions = db.query(AssessmentQuestion).filter(AssessmentQuestion.id.in_(question_ids)).all()
 
     total_questions = len(questions)
     if total_questions == 0:
@@ -34,12 +38,9 @@ def score_assessment_attempt(
     # Clear any previous answers for this attempt if re-scored
     db.query(AssessmentAnswer).filter(AssessmentAnswer.attempt_id == attempt.id).delete()
 
-    for q_id, selected_opt in submitted_answers.items():
-        q = q_map.get(q_id)
-        if not q:
-            continue
-        
-        is_corr = (selected_opt == q.correct_option_id)
+    for q in questions:
+        selected_opt = submitted_answers.get(q.id)
+        is_corr = bool(selected_opt and selected_opt == q.correct_option_id)
         if is_corr:
             correct_count += 1
 

@@ -53,7 +53,8 @@ def start_assessment(
         expires_at=expires_at,
         status="in_progress",
         camera_monitoring_enabled=req.camera_monitoring_enabled,
-        integrity_status="clean"
+        integrity_status="clean",
+        integrity_summary={"question_ids": [q.id for q in selected_questions]}
     )
     db.add(attempt)
     db.commit()
@@ -77,13 +78,21 @@ def start_assessment(
             )
         )
 
+    start_dt = attempt.started_at
+    if start_dt and start_dt.tzinfo is None:
+        start_dt = start_dt.replace(tzinfo=timezone.utc)
+
+    exp_dt = attempt.expires_at
+    if exp_dt and exp_dt.tzinfo is None:
+        exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+
     return AssessmentAttemptOut(
         id=attempt.id,
         title=attempt.title,
         category=attempt.category,
         career_id=attempt.career_id,
-        started_at=attempt.started_at,
-        expires_at=attempt.expires_at,
+        started_at=start_dt,
+        expires_at=exp_dt,
         time_limit_minutes=TIME_LIMIT_MINUTES,
         camera_monitoring_enabled=attempt.camera_monitoring_enabled,
         status=attempt.status,
