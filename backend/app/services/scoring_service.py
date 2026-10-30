@@ -127,10 +127,20 @@ def calculate_skill_gaps(db: Session, user_id: str, target_career_id: str) -> Di
     Computes transparent skill gaps: Gap = Target Proficiency - Current Proficiency.
     Categorizes into strong, developing, needing attention, and unassessed.
     """
-    career = db.query(CareerProfile).filter(CareerProfile.id == target_career_id).first()
+    target_slug = (target_career_id or "full-stack-developer").lower().replace(" ", "-").replace("/", "-")
+    career = (
+        db.query(CareerProfile).filter(CareerProfile.id == target_career_id).first()
+        or db.query(CareerProfile).filter(CareerProfile.id == target_slug).first()
+        or db.query(CareerProfile).filter(CareerProfile.title.ilike(f"%{target_career_id}%")).first()
+    )
     if not career:
         target_career_id = "full-stack-developer"
         career = db.query(CareerProfile).filter(CareerProfile.id == target_career_id).first()
+    else:
+        target_career_id = career.id
+
+    user = db.query(User).filter(User.id == user_id).first()
+    user_existing_skills = [s.lower() for s in (user.existing_skills or [])] if user else []
 
     expectations = career.proficiency_expectations or {}
     user_skills = {
@@ -171,9 +181,14 @@ def calculate_skill_gaps(db: Session, user_id: str, target_career_id: str) -> Di
             else:
                 needing_attention.append(skill_info)
         else:
-            # Not yet assessed
-            curr = 1.0  # default baseline
-            gap = target_prof - curr
+            # Check if student self-reported familiarity with this skill in their profile
+            normalized_name = skill_id.replace("-", " ").lower()
+            is_self_reported = any(
+                skill_id in es or es in skill_id or normalized_name in es or es in normalized_name
+                for es in user_existing_skills
+            )
+            curr = 2.0 if is_self_reported else 1.0
+            gap = max(0.0, target_prof - curr)
             total_current_prof += curr
             skill_info = {
                 "skill_id": skill_id,
@@ -181,11 +196,19 @@ def calculate_skill_gaps(db: Session, user_id: str, target_career_id: str) -> Di
                 "current_proficiency": curr,
                 "target_proficiency": target_prof,
                 "gap": round(gap, 2),
-                "confidence": "none (unassessed)",
+                "confidence": "self-reported" if is_self_reported else "unassessed",
                 "estimated_study_hours": int(gap * 15)
             }
             total_gap_hours += skill_info["estimated_study_hours"]
-            unassessed_skills.append(skill_info)
+            if is_self_reported:
+                if gap <= 0.5:
+                    strong_skills.append(skill_info)
+                elif gap <= 1.5:
+                    developing_skills.append(skill_info)
+                else:
+                    needing_attention.append(skill_info)
+            else:
+                unassessed_skills.append(skill_info)
 
     match_pct = round((total_current_prof / max(total_target_prof, 1.0)) * 100.0, 1)
 
