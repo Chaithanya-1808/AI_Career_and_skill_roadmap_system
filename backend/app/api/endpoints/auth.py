@@ -37,7 +37,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     db.add(role)
     db.commit()
 
-    token = create_access_token(data={"sub": user.id, "email": user.email, "role": role_name})
+    token = create_access_token(data={"sub": user.id, "email": user.email, "roles": [role_name]})
     user_out = UserOut.model_validate(user)
     user_out.roles = [role_name]
     return Token(access_token=token, token_type="bearer", user=user_out)

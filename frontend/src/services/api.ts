@@ -23,8 +23,24 @@ async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     let errorMsg = 'An error occurred';
     try {
-      const err = await res.json();
-      errorMsg = err.detail || err.message || JSON.stringify(err);
+      const text = await res.text();
+      try {
+        const err = JSON.parse(text);
+        errorMsg = err.detail || err.message || JSON.stringify(err);
+      } catch {
+        if (
+          text.includes('ECONNREFUSED') ||
+          text.includes('connect') ||
+          res.status === 502 ||
+          res.status === 503 ||
+          res.status === 504 ||
+          (res.status === 500 && !text)
+        ) {
+          errorMsg = 'Cannot connect to backend server. Please ensure the FastAPI backend is running on port 8000.';
+        } else {
+          errorMsg = text || res.statusText || String(res.status);
+        }
+      }
     } catch {
       errorMsg = res.statusText || String(res.status);
     }
