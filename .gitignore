@@ -39,8 +39,8 @@ yarn-error.log*
 
 # Environment & Credentials
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 *.pem
 *.key
 
@@ -56,3 +56,10 @@ Thumbs.db
 *.swp
 *.swo
 
+# Local database
+*.db
+*.db-backup
+*.backup
+
+# Personal certificates
+backend/app/static/certificates/*.pdf
