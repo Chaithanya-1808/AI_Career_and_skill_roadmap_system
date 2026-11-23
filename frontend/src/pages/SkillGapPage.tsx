@@ -85,10 +85,10 @@ export const SkillGapPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header Card */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-950/60 via-[#121625] to-[#0c101b] border border-orange-500/30 text-white shadow-[0_0_35px_rgba(249,115,22,0.15)] flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm text-blue-200 text-[11px] font-semibold mb-2.5">
-            <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-300 text-[11px] font-semibold mb-2.5">
+            <Sparkles className="w-3.5 h-3.5 text-orange-400" />
             <span>Explainable Evaluation Model • Verified Diagnostic Metrics</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
@@ -105,7 +105,7 @@ export const SkillGapPage: React.FC = () => {
             <select
               value={selectedCareerId}
               onChange={(e) => setSelectedCareerId(e.target.value)}
-              className="w-full sm:w-auto bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full sm:w-auto bg-slate-900 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               {careers.length > 0 ? (
                 careers.map((c) => (
@@ -149,7 +149,7 @@ export const SkillGapPage: React.FC = () => {
             </div>
             <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-blue-600 h-full rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-orange-600 to-amber-500 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]"
                 style={{ width: `${gapReport?.overall_match_percentage || 0}%` }}
               />
             </div>
@@ -302,17 +302,17 @@ export const SkillGapPage: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div>
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-blue-600" />
+                <BarChart3 className="w-4 h-4 text-orange-400" />
                 <span>Current vs Target Proficiency</span>
               </h3>
               <p className="text-[11px] text-slate-500">Scale: 1.0 (Novice) to 5.0 (Industry Master)</p>
             </div>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 font-medium text-slate-600">
-                <span className="w-2.5 h-2.5 rounded bg-blue-600 inline-block" /> Current Level
+              <span className="flex items-center gap-1.5 font-medium text-slate-400">
+                <span className="w-2.5 h-2.5 rounded bg-orange-500 inline-block" /> Current Level
               </span>
-              <span className="flex items-center gap-1.5 font-medium text-slate-600">
-                <span className="w-2.5 h-2.5 rounded bg-slate-300 inline-block" /> Target Level
+              <span className="flex items-center gap-1.5 font-medium text-slate-400">
+                <span className="w-2.5 h-2.5 rounded bg-slate-600 inline-block" /> Target Level
               </span>
             </div>
           </div>
@@ -320,16 +320,16 @@ export const SkillGapPage: React.FC = () => {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 15, right: 10, left: -20, bottom: 25 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" interval={0} />
-                <YAxis domain={[0, 5]} tick={{ fontSize: 10 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.08)" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#cbd5e1' }} angle={-25} textAnchor="end" interval={0} stroke="rgba(255,255,255,0.15)" />
+                <YAxis domain={[0, 5]} tick={{ fontSize: 10, fill: '#cbd5e1' }} stroke="rgba(255,255,255,0.15)" />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const data = payload[0].payload;
                       return (
-                        <div className="p-2.5 bg-slate-900 text-white rounded-xl text-xs shadow-lg space-y-1">
-                          <p className="font-bold text-blue-300">{data.fullName}</p>
+                        <div className="p-2.5 bg-[#0c101b] border border-orange-500/30 text-white rounded-xl text-xs shadow-xl space-y-1">
+                          <p className="font-bold text-orange-400">{data.fullName}</p>
                           <p>Current Level: <b className="text-white">{data.Current} / 5.0</b></p>
                           <p>Target Level: <b className="text-white">{data.Target} / 5.0</b></p>
                           <p>Skill Gap: <b className="text-amber-300">+{data.Gap}</b></p>
@@ -340,8 +340,8 @@ export const SkillGapPage: React.FC = () => {
                     return null;
                   }}
                 />
-                <Bar dataKey="Current" fill="#2563eb" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Current" fill="#f97316" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Target" fill="#334155" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -352,7 +352,7 @@ export const SkillGapPage: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div>
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-600" />
+                <Layers className="w-4 h-4 text-orange-400" />
                 <span>Proficiency Radar Coverage</span>
               </h3>
               <p className="text-[11px] text-slate-500">Competency perimeter vs target role benchmark</p>
@@ -362,11 +362,11 @@ export const SkillGapPage: React.FC = () => {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="skill" tick={{ fontSize: 9, fill: '#64748b' }} />
-                <PolarRadiusAxis domain={[0, 5]} tick={{ fontSize: 9 }} />
-                <Radar name="Current Proficiency" dataKey="current" stroke="#2563eb" fill="#3b82f6" fillOpacity={0.4} />
-                <Radar name="Target Expectation" dataKey="target" stroke="#94a3b8" fill="#94a3b8" fillOpacity={0.15} />
+                <PolarGrid stroke="rgba(255,255,255,0.12)" />
+                <PolarAngleAxis dataKey="skill" tick={{ fontSize: 9, fill: '#cbd5e1' }} />
+                <PolarRadiusAxis domain={[0, 5]} tick={{ fontSize: 9, fill: '#94a3b8' }} stroke="rgba(255,255,255,0.15)" />
+                <Radar name="Current Proficiency" dataKey="current" stroke="#f97316" fill="#f97316" fillOpacity={0.4} />
+                <Radar name="Target Expectation" dataKey="target" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.15} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

@@ -58,14 +58,27 @@ app.include_router(certificates.router, prefix=f"{api_prefix}/certificates", tag
 app.include_router(mentors.router, prefix=f"{api_prefix}/mentors", tags=["Mentor & Faculty Workflows"])
 app.include_router(admin.router, prefix=f"{api_prefix}/admin", tags=["Administration & Audit"])
 
-@app.get("/")
-def root():
-    return {
-        "system": settings.PROJECT_NAME,
-        "status": "operational",
-        "documentation": "/docs",
-        "api_v1": api_prefix
-    }
+from fastapi.responses import FileResponse
+
+FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+
+if os.path.exists(FRONTEND_DIST):
+    assets_dir = os.path.join(FRONTEND_DIST, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+@app.get("/api/download-report")
+@app.get("/download-report")
+def download_project_report():
+    report_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "AI_CareerPath_Complete_Project_Report.pdf"))
+    if not os.path.exists(report_path):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Project report PDF not found")
+    return FileResponse(
+        path=report_path,
+        filename="AI_CareerPath_Complete_Project_Report.pdf",
+        media_type="application/pdf"
+    )
 
 @app.get("/api/health")
 @app.get("/health")
@@ -76,4 +89,27 @@ def health_check():
         "ai_model": settings.AI_MODEL,
         "ai_provider_ready": bool(settings.GEMINI_API_KEY)
     }
+
+@app.get("/")
+def root():
+    index_file = os.path.join(FRONTEND_DIST, "index.html") if os.path.exists(FRONTEND_DIST) else None
+    if index_file and os.path.exists(index_file):
+        return FileResponse(index_file)
+    return {
+        "system": settings.PROJECT_NAME,
+        "status": "operational",
+        "documentation": "/docs",
+        "api_v1": api_prefix
+    }
+
+if os.path.exists(FRONTEND_DIST):
+    @app.get("/{full_path:path}")
+    async def serve_spa_frontend(full_path: str):
+        if full_path.startswith("api/") or full_path == "api":
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="API route not found")
+        target = os.path.join(FRONTEND_DIST, full_path)
+        if full_path and os.path.exists(target) and os.path.isfile(target):
+            return FileResponse(target)
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 

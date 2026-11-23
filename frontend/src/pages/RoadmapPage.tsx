@@ -171,7 +171,7 @@ export const RoadmapPage: React.FC = () => {
         </div>
         <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
           <div
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 h-full rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(249,115,22,0.4)]"
             style={{ width: `${roadmap.overall_progress_percentage}%` }}
           />
         </div>

@@ -26,7 +26,29 @@ async function handleResponse<T>(res: Response): Promise<T> {
       const text = await res.text();
       try {
         const err = JSON.parse(text);
-        errorMsg = err.detail || err.message || JSON.stringify(err);
+        if (Array.isArray(err.detail)) {
+          errorMsg = err.detail
+            .map((item: any) => {
+              if (typeof item === 'string') return item;
+              if (item && item.msg) {
+                const field = item.loc ? item.loc[item.loc.length - 1] : '';
+                if (field === 'email') {
+                  return 'Please enter a valid email address (e.g. yourname@gmail.com)';
+                }
+                return field ? `${field}: ${item.msg}` : item.msg;
+              }
+              return JSON.stringify(item);
+            })
+            .join(' • ');
+        } else if (typeof err.detail === 'string') {
+          errorMsg = err.detail;
+        } else if (typeof err.detail === 'object' && err.detail !== null) {
+          errorMsg = err.detail.msg || err.detail.message || JSON.stringify(err.detail);
+        } else if (err.message) {
+          errorMsg = typeof err.message === 'string' ? err.message : JSON.stringify(err.message);
+        } else {
+          errorMsg = JSON.stringify(err);
+        }
       } catch {
         if (
           text.includes('ECONNREFUSED') ||

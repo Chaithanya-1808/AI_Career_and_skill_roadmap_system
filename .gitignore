@@ -31,7 +31,9 @@ htmlcov/
 # Node & Frontend
 node_modules/
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/ is tracked for 1-click cloud zero-build deployments
+!frontend/dist/
+!frontend/dist/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -45,8 +47,8 @@ yarn-error.log*
 *.key
 
 # Database
-# Keep schema and seeds, exclude local ephemeral db files if desired (or keep career_path.db for immediate evaluation)
 *.sqlite3-journal
+cloudflared.exe
 
 # Operating System & IDEs
 .DS_Store

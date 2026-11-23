@@ -4,14 +4,35 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 
 # ----------------- Auth & Profile -----------------
 class UserCreate(BaseModel):
-    email: EmailStr
+    email: str
     password: str = Field(..., min_length=6)
     full_name: str = Field(..., min_length=2)
     role: Optional[str] = "student"  # default student, only bootstrap creates admin
 
+    @field_validator("email")
+    @classmethod
+    def normalize_and_validate_email(cls, v: str) -> str:
+        v = v.strip().lower()
+        if "@" not in v:
+            raise ValueError("Email address must include '@' (e.g. bhuvan@gmail.com)")
+        parts = v.split("@")
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            raise ValueError("Please enter a valid email format like student@college.edu")
+        if "." not in parts[1]:
+            v = f"{v}.com"
+        return v
+
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
+
+    @field_validator("email")
+    @classmethod
+    def normalize_login_email(cls, v: str) -> str:
+        v = v.strip().lower()
+        if "@" in v and "." not in v.split("@")[1]:
+            v = f"{v}.com"
+        return v
 
 class UserRoleOut(BaseModel):
     role: str

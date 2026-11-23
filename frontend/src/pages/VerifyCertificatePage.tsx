@@ -41,20 +41,28 @@ export const VerifyCertificatePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#05060b] text-slate-100 flex flex-col relative selection:bg-orange-500 selection:text-white">
+      {/* Top ambient spotlight */}
+      <div
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249, 115, 22, 0.1) 0%, transparent 70%)'
+        }}
+      />
+
       {/* Top Header */}
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-20">
+      <header className="border-b border-white/[0.08] bg-[#080b14]/80 backdrop-blur-xl sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span>Return to Platform</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-[0_0_15px_rgba(249,115,22,0.4)]">
               <Sparkles className="w-4 h-4" />
             </div>
-            <span className="font-bold text-slate-900 text-sm">Public Certificate Verification</span>
+            <span className="font-bold text-white text-sm">Public Certificate Verification</span>
           </div>
         </div>
       </header>

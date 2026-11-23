@@ -53,24 +53,27 @@ export const OverviewPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm text-blue-100 text-[11px] font-semibold mb-2">
+      {/* Top Banner with Pinterest-inspired Celestial Obsidian Glow */}
+      <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-orange-950/60 via-[#121625] to-[#0c101b] border border-orange-500/30 text-white shadow-[0_0_35px_rgba(249,115,22,0.15)] flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-gradient-to-b from-orange-500/15 to-transparent blur-3xl pointer-events-none -z-0" />
+
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-300 text-xs font-semibold mb-3 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Target Role: {user?.target_job_role || 'Full-Stack Developer'}</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
             Welcome, {user?.full_name || 'Student'}!
           </h1>
-          <p className="text-xs md:text-sm text-blue-100 mt-1 max-w-xl">
+          <p className="text-xs md:text-sm text-slate-300 mt-1.5 max-w-xl leading-relaxed">
             You're scheduled for {user?.available_hours_per_week || 14} hours/week over {user?.target_timeline_weeks || 16} weeks. Keep building your verifiable portfolio milestones!
           </p>
         </div>
-        <div className="flex items-center gap-2 self-stretch md:self-auto">
+        <div className="flex items-center gap-2 self-stretch md:self-auto relative z-10">
           <button
             onClick={() => navigate('/roadmap')}
-            className="flex-1 md:flex-initial bg-white text-blue-700 hover:bg-blue-50 font-semibold px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 md:flex-initial bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 hover:from-orange-500 hover:via-amber-400 text-white font-semibold px-5 py-3 rounded-xl text-xs shadow-lg shadow-orange-500/30 border border-orange-400/40 transition-all flex items-center justify-center gap-2"
           >
             <span>View Roadmap</span>
             <ArrowRight className="w-4 h-4" />
@@ -80,57 +83,57 @@ export const OverviewPage: React.FC = () => {
 
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold">Roadmap Progress</span>
-            <Target className="w-4 h-4 text-blue-600" />
+            <Target className="w-4 h-4 text-orange-400" />
           </div>
-          <div className="text-2xl font-bold text-slate-900">
+          <div className="text-2xl sm:text-3xl font-extrabold text-white">
             {roadmap?.overall_progress_percentage || 0}%
           </div>
-          <div className="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
+          <div className="w-full bg-white/10 h-1.5 rounded-full mt-3 overflow-hidden">
             <div
-              className="bg-blue-600 h-full rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-orange-500 to-amber-400 h-full rounded-full transition-all duration-500"
               style={{ width: `${roadmap?.overall_progress_percentage || 0}%` }}
             />
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold">Tasks Completed</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-bold text-slate-900">
+          <div className="text-2xl sm:text-3xl font-extrabold text-white">
             {completedTasksCount} / {totalTasksCount}
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">
+          <p className="text-[11px] text-amber-400/90 mt-2 font-medium">
             {totalTasksCount - completedTasksCount} pending milestones
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold">Weekly Study Target</span>
-            <Clock className="w-4 h-4 text-indigo-600" />
+            <Clock className="w-4 h-4 text-indigo-400" />
           </div>
-          <div className="text-2xl font-bold text-slate-900">
+          <div className="text-2xl sm:text-3xl font-extrabold text-white">
             {user?.available_hours_per_week || 14}h / wk
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">
+          <p className="text-[11px] text-slate-400 mt-2">
             ~{Math.round((user?.available_hours_per_week || 14) / 7)} hours per day
           </p>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 mb-2">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold">Overall Match</span>
-            <TrendingUp className="w-4 h-4 text-amber-600" />
+            <TrendingUp className="w-4 h-4 text-orange-400" />
           </div>
-          <div className="text-2xl font-bold text-slate-900">
+          <div className="text-2xl sm:text-3xl font-extrabold text-orange-400">
             {gapReport?.overall_match_percentage || 50}%
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">
+          <p className="text-[11px] text-slate-400 mt-2">
             Based on verified diagnostic evidence
           </p>
         </div>
@@ -141,44 +144,44 @@ export const OverviewPage: React.FC = () => {
         {/* Left Column: Next Recommended Task & Actions */}
         <div className="lg:col-span-2 space-y-6">
           {/* Next Recommended Task Card */}
-          <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08] mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30 flex items-center justify-center font-bold text-xs shadow-[0_0_15px_rgba(249,115,22,0.3)]">
                   <Map className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900">Next Recommended Action</h2>
-                  <p className="text-[11px] text-slate-500">Prerequisite-unlocked priority learning task</p>
+                  <h2 className="text-sm font-bold text-white">Next Recommended Action</h2>
+                  <p className="text-[11px] text-slate-400">Prerequisite-unlocked priority learning task</p>
                 </div>
               </div>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 uppercase">
+              <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30 uppercase">
                 {nextTask?.status || 'Active'}
               </span>
             </div>
 
             {nextTask ? (
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-orange-400/90 uppercase tracking-wider">
                       Stage {nextTask.stage_number}: {nextTask.stage_title}
                     </span>
-                    <h3 className="text-base font-bold text-slate-900 mt-0.5">{nextTask.title}</h3>
+                    <h3 className="text-base font-bold text-white mt-0.5">{nextTask.title}</h3>
                   </div>
-                  <span className="shrink-0 text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
+                  <span className="shrink-0 text-xs font-semibold text-slate-300 bg-white/[0.06] border border-white/[0.08] px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-orange-400" />
                     <span>{nextTask.estimated_hours}h</span>
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   {nextTask.description}
                 </p>
 
                 {nextTask.recommendation_reason && (
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60 text-xs text-slate-600 flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div className="p-3.5 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-200 flex items-start gap-2.5">
+                    <Sparkles className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                     <span><b>Why this now:</b> {nextTask.recommendation_reason}</span>
                   </div>
                 )}
@@ -186,25 +189,25 @@ export const OverviewPage: React.FC = () => {
                 <div className="pt-2 flex items-center gap-3">
                   <button
                     onClick={() => navigate('/roadmap')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow-sm transition-colors flex items-center gap-1.5"
+                    className="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 hover:from-orange-500 hover:via-amber-400 text-white font-semibold px-4 py-2.5 rounded-xl text-xs shadow-md shadow-orange-500/25 transition-all flex items-center gap-1.5"
                   >
                     <span>Resume Learning</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => navigate('/planner')}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl text-xs transition-colors flex items-center gap-1.5"
+                    className="bg-white/[0.06] hover:bg-white/[0.12] text-slate-200 font-semibold px-4 py-2.5 rounded-xl text-xs border border-white/[0.1] transition-colors flex items-center gap-1.5"
                   >
-                    <Calendar className="w-3.5 h-3.5" />
+                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
                     <span>View in Weekly Planner</span>
                   </button>
                 </div>
               </div>
             ) : (
               <div className="text-center py-6">
-                <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-                <p className="text-sm font-bold text-slate-900">All current stage tasks completed!</p>
-                <p className="text-xs text-slate-500 mt-1">Check your roadmap or claim eligible certificates.</p>
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
+                <p className="text-sm font-bold text-white">All current stage tasks completed!</p>
+                <p className="text-xs text-slate-400 mt-1">Check your roadmap or claim eligible certificates.</p>
               </div>
             )}
           </div>
@@ -213,58 +216,58 @@ export const OverviewPage: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Link
               to="/assessments"
-              className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm hover:border-blue-300 hover:shadow-md transition-all text-center group"
+              className="p-3.5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-sm hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.15)] transition-all text-center group"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/25 text-orange-400 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
                 <Target className="w-4 h-4" />
               </div>
-              <p className="text-xs font-bold text-slate-900">Diagnostic</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Assess Skills</p>
+              <p className="text-xs font-bold text-white">Diagnostic</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Assess Skills</p>
             </Link>
 
             <Link
               to="/skill-gap"
-              className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm hover:border-blue-300 hover:shadow-md transition-all text-center group"
+              className="p-3.5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-sm hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.15)] transition-all text-center group"
             >
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-400 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
                 <TrendingUp className="w-4 h-4" />
               </div>
-              <p className="text-xs font-bold text-slate-900">Skill Gaps</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Radar Analysis</p>
+              <p className="text-xs font-bold text-white">Skill Gaps</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Radar Analysis</p>
             </Link>
 
             <Link
               to="/projects"
-              className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm hover:border-blue-300 hover:shadow-md transition-all text-center group"
+              className="p-3.5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-sm hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.15)] transition-all text-center group"
             >
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
                 <BookOpen className="w-4 h-4" />
               </div>
-              <p className="text-xs font-bold text-slate-900">Projects</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Portfolio Proof</p>
+              <p className="text-xs font-bold text-white">Projects</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Portfolio Proof</p>
             </Link>
 
             <Link
               to="/certificates"
-              className="p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm hover:border-blue-300 hover:shadow-md transition-all text-center group"
+              className="p-3.5 rounded-2xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-sm hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.15)] transition-all text-center group"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/25 text-rose-400 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
                 <Award className="w-4 h-4" />
               </div>
-              <p className="text-xs font-bold text-slate-900">Certificates</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Verifiable PDF</p>
+              <p className="text-xs font-bold text-white">Certificates</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Verifiable PDF</p>
             </Link>
           </div>
         </div>
 
         {/* Right Column: Skill Radar Chart */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <div className="p-5 sm:p-6 rounded-3xl bg-[#0c101b]/80 backdrop-blur-xl border border-white/[0.08] shadow-lg flex flex-col">
+          <div className="flex items-center justify-between pb-3 border-b border-white/[0.08] mb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Skill Mastery Radar</h2>
-              <p className="text-[11px] text-slate-500">Current vs Target Proficiency</p>
+              <h2 className="text-sm font-bold text-white">Skill Mastery Radar</h2>
+              <p className="text-[11px] text-slate-400">Current vs Target Proficiency</p>
             </div>
-            <Link to="/skill-gap" className="text-xs text-blue-600 hover:underline font-semibold">
+            <Link to="/skill-gap" className="text-xs text-orange-400 hover:text-orange-300 hover:underline font-semibold">
               Full Report
             </Link>
           </div>
@@ -273,11 +276,11 @@ export const OverviewPage: React.FC = () => {
             {radarData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData}>
-                  <PolarGrid stroke="#e2e8f0" />
-                  <PolarAngleAxis dataKey="skill" tick={{ fontSize: 10, fill: '#64748b' }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 9 }} />
-                  <Radar name="Current" dataKey="current" stroke="#2563eb" fill="#3b82f6" fillOpacity={0.4} />
-                  <Radar name="Target" dataKey="target" stroke="#93c5fd" fill="#93c5fd" fillOpacity={0.15} />
+                  <PolarGrid stroke="rgba(255,255,255,0.12)" />
+                  <PolarAngleAxis dataKey="skill" tick={{ fontSize: 10, fill: '#cbd5e1' }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} stroke="rgba(255,255,255,0.08)" tick={{ fontSize: 9, fill: '#64748b' }} />
+                  <Radar name="Current" dataKey="current" stroke="#f97316" fill="#f97316" fillOpacity={0.4} />
+                  <Radar name="Target" dataKey="target" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.15} />
                 </RadarChart>
               </ResponsiveContainer>
             ) : (
@@ -287,13 +290,13 @@ export const OverviewPage: React.FC = () => {
             )}
           </div>
 
-          <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-center gap-6 text-[11px] text-slate-600">
+          <div className="mt-3 pt-3 border-t border-white/[0.08] flex items-center justify-center gap-6 text-[11px] text-slate-400">
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-blue-600" />
+              <span className="w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
               <span>Current Level</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-blue-200" />
+              <span className="w-3 h-3 rounded-full bg-sky-400/60" />
               <span>Target Level</span>
             </div>
           </div>
@@ -302,4 +305,3 @@ export const OverviewPage: React.FC = () => {
     </div>
   );
 };
-
