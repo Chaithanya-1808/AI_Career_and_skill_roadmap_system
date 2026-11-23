@@ -4,7 +4,7 @@ import sys
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable, Image
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
@@ -1195,34 +1195,47 @@ END FUNCTION""")
     story.append(acr_table)
 
     story.append(Spacer(1, 14))
-    story.append(Paragraph("APPENDIX B: SNAPSHOTS CATALOG", chap_title_style))
+    story.append(Paragraph("APPENDIX B: SYSTEM SCREEN SNAPSHOTS & USER INTERFACE WALKTHROUGH", chap_title_style))
+    story.append(Paragraph("This appendix provides comprehensive, high-resolution evidence of the working platform across all key interaction surfaces, diagnostic proctoring rooms, and verifiable credential workflows.", body_style))
+    story.append(Spacer(1, 10))
+
+    snapshots_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "snapshots"))
+
     snapshots = [
-        ("Snapshot B.1 – Public Landing Page & Demo Portal", "Displays the hero header, core platform highlights, and one-click demo access button configured for student Chaithanya (3rd Year CSE)."),
-        ("Snapshot B.2 – Student Registration & Authentication Modal", "Displays secure sign-up and sign-in dialogs implementing bcrypt encryption, JWT token exchange, and validation error alerting."),
-        ("Snapshot B.3 – Student Academic Profile Management View", "Displays the comprehensive 15-field profile editor, multi-select tag inputs, daily study hours slider, and real-time profile completion percentage indicator bar."),
-        ("Snapshot B.4 – Dashboard Overview View", "Central hub showcasing personalized welcome greetings, roadmap progress percentage, tasks completed counter, weekly study target, overall career match score, and next recommended learning actions."),
-        ("Snapshot B.5 – Career Explorer & Recommendation View", "Displays interactive career role cards, salary expectations, prerequisite listings, and computed match percentages based on student competencies."),
-        ("Snapshot B.6 – Timed Diagnostic Assessment Room", "Features the 15-minute countdown clock, voluntary camera monitoring toggle, question navigation palette, code snippet displays, and option selectors."),
-        ("Snapshot B.7 – Diagnostic Score Report & Question Review", "Displays the student's evaluated percentage, correct vs. incorrect breakdown, category mastery analysis, and per-question technical explanations."),
-        ("Snapshot B.8 – Skill Gap Analysis & Multi-Axis Radar Visualization", "Renders the Recharts polar radar chart contrasting assessed proficiency against career benchmarks, accompanied by prioritized deficiency badges."),
-        ("Snapshot B.9 – Prerequisite-Aware Learning Roadmap View", "Displays the stage-by-stage learning curriculum, prerequisite task status indicators (locked, available, in_progress, completed), and deliverable upload links."),
-        ("Snapshot B.10 – Weekly Study Planner Agenda", "Displays the 7-day calendar allocating open tasks to meet daily study hour targets with time tracking buttons."),
-        ("Snapshot B.11 – Curated Learning Resources & Capstone Project Repository", "Displays filterable technical documentation links, video tutorials, and structured project specifications with milestone checklists."),
-        ("Snapshot B.12 – Verifiable Certificate Generation & Public Verification Portal", "Displays the generated PDF certificate with embedded SHA-256 verification hash, dynamic QR code, and the public lookup endpoint confirming student achievement.")
+        ("Snapshot B.1 – Public Landing Page & Demo Portal", "Displays the hero header, core platform highlights, and one-click demo access button configured for student Chaithanya (3rd Year CSE).", "Snapshot_B1_Landing_Page.png"),
+        ("Snapshot B.2 – Student Registration & Authentication Modal", "Displays secure sign-up and sign-in dialogs implementing bcrypt encryption, JWT token exchange, and validation error alerting.", "Snapshot_B2_Authentication_Modal.png"),
+        ("Snapshot B.3 – Student Academic Profile Management View", "Displays the comprehensive 15-field profile editor, multi-select tag inputs, daily study hours slider, and real-time profile completion percentage indicator bar.", "Snapshot_B3_Academic_Profile.png"),
+        ("Snapshot B.4 – Dashboard Overview View", "Central hub showcasing personalized welcome greetings, roadmap progress percentage, tasks completed counter, weekly study target, overall career match score, and next recommended learning actions.", "Snapshot_B4_Dashboard_Overview.png"),
+        ("Snapshot B.5 – Career Explorer & Recommendation View", "Displays interactive career role cards, salary expectations, prerequisite listings, and computed match percentages based on student competencies.", "Snapshot_B5_Career_Explorer.png"),
+        ("Snapshot B.6 – Timed Diagnostic Assessment Room", "Features the 15-minute countdown clock, voluntary camera monitoring toggle, question navigation palette, code snippet displays, and option selectors.", "Snapshot_B6_Diagnostic_Assessment_Room.png"),
+        ("Snapshot B.7 – Diagnostic Score Report & Question Review", "Displays the student's evaluated percentage, correct vs. incorrect breakdown, category mastery analysis, and per-question technical explanations.", "Snapshot_B7_Diagnostic_Score_Report.png"),
+        ("Snapshot B.8 – Skill Gap Analysis & Multi-Axis Radar Visualization", "Renders the Recharts polar radar chart contrasting assessed proficiency against career benchmarks, accompanied by prioritized deficiency badges.", "Snapshot_B8_Skill_Gap_Radar.png"),
+        ("Snapshot B.9 – Prerequisite-Aware Learning Roadmap View", "Displays the stage-by-stage learning curriculum, prerequisite task status indicators (locked, available, in_progress, completed), and deliverable upload links.", "Snapshot_B9_Learning_Roadmap.png"),
+        ("Snapshot B.10 – Weekly Study Planner Agenda", "Displays the 7-day calendar allocating open tasks to meet daily study hour targets with time tracking buttons.", "Snapshot_B10_Weekly_Study_Planner.png"),
+        ("Snapshot B.11 – Curated Learning Resources & Capstone Project Repository", "Displays filterable technical documentation links, video tutorials, and structured project specifications with milestone checklists.", "Snapshot_B11_Resources_And_Projects.png"),
+        ("Snapshot B.12 – Verifiable Certificate Generation & Public Verification Portal", "Displays the generated PDF certificate with embedded SHA-256 verification hash, dynamic QR code, and the public lookup endpoint confirming student achievement.", "Snapshot_B12_Verifiable_Certificate_Portal.png")
     ]
-    for snap_title, snap_desc in snapshots:
-        card = Table([
-            [Paragraph(f"<b>{snap_title}</b>", ParagraphStyle('SnapTitle', fontName='Helvetica-Bold', fontSize=8.5, leading=11, textColor=colors.HexColor("#1e3a8a")))],
-            [Paragraph(snap_desc, ParagraphStyle('SnapDesc', fontName='Helvetica', fontSize=8, leading=10.5, textColor=colors.HexColor("#334155")))]
-        ], colWidths=[A4[0] - 108])
+
+    for snap_title, snap_desc, snap_img in snapshots:
+        img_path = os.path.join(snapshots_dir, snap_img)
+        card_content = [
+            [Paragraph(f"<b>{snap_title}</b>", ParagraphStyle('SnapTitle', fontName='Helvetica-Bold', fontSize=9, leading=12, textColor=colors.HexColor("#1e3a8a")))],
+            [Paragraph(snap_desc, ParagraphStyle('SnapDesc', fontName='Helvetica', fontSize=8, leading=11, textColor=colors.HexColor("#334155")))]
+        ]
+        if os.path.exists(img_path):
+            card_content.append([Image(img_path, width=470, height=265)])
+
+        card = Table(card_content, colWidths=[A4[0] - 108])
         card.setStyle(TableStyle([
             ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#eff6ff")),
             ('BACKGROUND', (0,1), (-1,1), colors.HexColor("#f8fafc")),
+            ('BACKGROUND', (0,2), (-1,2), colors.HexColor("#0f172a")),
+            ('ALIGN', (0,2), (-1,2), 'CENTER'),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
             ('BOX', (0,0), (-1,-1), 0.75, colors.HexColor("#93c5fd")),
             ('PADDING', (0,0), (-1,-1), 4),
         ]))
-        story.append(card)
-        story.append(Spacer(1, 4))
+        story.append(KeepTogether([card, Spacer(1, 12)]))
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"COMPLETE_REPORT_GENERATED_SUCCESSFULLY: {output_filename}")
